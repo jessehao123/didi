@@ -40,13 +40,15 @@ public class Consumer extends ShutdownableThread {
     private PrintWriter printWriter = null;
     private String lineSeparator = null;
     private int batchNum = 0;
+    private int msgIndex = 0;
 
 
     public Consumer(String topic, String groupId) {
         super("KafkaConsumerExample", false);
         Properties props = new Properties();
 
-        props.put("bootstrap.servers", "10.20.3.179:9092");
+        props.put("bootstrap.servers", "192.168.56.110:9092");
+//        props.put("bootstrap.servers", "10.20.3.179:9092");
 //        props.put("bootstrap.servers", "192.168.52.110:9092");
         props.put("group.id", groupId);
         props.put("enable.auto.commit", "true");
@@ -65,7 +67,7 @@ public class Consumer extends ShutdownableThread {
 
         consumer.subscribe(Collections.singletonList(this.topic));
         ConsumerRecords<Integer, String> records = consumer.poll(Duration.ofSeconds(1));
-        System.out.println("消费到消息数:" + records.count());
+        System.out.println("[" + msgIndex++ + "] 消费到消息数:" + records.count());
         if (records.count() > 0) {
             for (ConsumerRecord<Integer, String> record : records) {
                 LOG.warn("Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
